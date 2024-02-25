@@ -12,7 +12,7 @@ Simple!
 Indeed this project a hypocrite
 
 # Features 
-This image format is gud
+why image format is gud?
 
 * Umcompressed in result it have big size
 * nothing in the internet support it
