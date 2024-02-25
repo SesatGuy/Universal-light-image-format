@@ -1,4 +1,4 @@
-# Universal-light-image-format
+# Universal Light Image Format (.ULIF)
 Just random image format in python cuz why not
 
 # Features 
