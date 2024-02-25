@@ -6,7 +6,7 @@ import os
 class ImageEncoderDecoderApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("Image Encoder/Decoder")
+        self.master.title("ULIF Program")
         self.master.geometry("1000x600")
         
         self.master.configure(bg="#f0f0f0")
@@ -49,40 +49,41 @@ class ImageEncoderDecoderApp:
                 messagebox.showerror("Error", f"Failed to process image: {str(e)}")
 
     def encode_ulif(self, filename):
-      if self.image:
-        try:
-            width, height = self.image.size
-            pixel_data = self.image.tobytes()
-            mode = self.image.mode  # Get image mode (e.g., "RGB", "RGBA", "P", etc.)
+        if self.image:
+            try:
+                rgb_image = self.image.convert("RGB")
+                width, height = rgb_image.size
+                pixel_data = rgb_image.tobytes()
+                mode = rgb_image.mode 
 
-            with open(filename, 'wb') as f:
-                f.write(width.to_bytes(4, byteorder='big'))
-                f.write(height.to_bytes(4, byteorder='big'))
-                f.write(mode.encode('ascii'))  # Encode mode as ASCII bytes
-                f.write(pixel_data)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to encode image: {str(e)}")
+                with open(filename, 'wb') as f:
+                    f.write(width.to_bytes(4, byteorder='big'))
+                    f.write(height.to_bytes(4, byteorder='big'))
+                    f.write(mode.encode('ascii'))
+                    f.write(pixel_data)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to encode image: {str(e)}")
             
     def decode_image(self):
         filename = filedialog.askopenfilename(filetypes=[("ULIF Files", "*.ulif")])
         if filename:
             try:
                 with open(filename, 'rb') as f:
+                    # Read width and height bytes
                     width_bytes = f.read(4)
                     height_bytes = f.read(4)
-                    mode_bytes = f.read(4)
 
-                    if len(width_bytes) != 4 or len(height_bytes) != 4 or len(mode_bytes) != 4:
+                    if len(width_bytes) != 4 or len(height_bytes) != 4:
                         messagebox.showerror("Error", "Invalid ULIF file format")
                         return
+
                     width = int.from_bytes(width_bytes, byteorder='big')
                     height = int.from_bytes(height_bytes, byteorder='big')
-                    mode = mode_bytes.decode('ascii', errors='replace')
                     pixel_data = f.read()
 
                 try:
-                    decoded_image = Image.frombytes(mode, (width, height), pixel_data)
-                    decoded_image.thumbnail((400, 300))  # Resize image to fit in label
+                    decoded_image = Image.frombytes("RGB", (width, height), pixel_data)
+                    decoded_image.thumbnail((400, 300))
                     decoded_photo = ImageTk.PhotoImage(decoded_image)
                     self.decoded_image_label.configure(image=decoded_photo)
                     self.decoded_image_label.image = decoded_photo
@@ -99,27 +100,23 @@ class ImageEncoderDecoderApp:
             with open(filename, 'rb') as f:
                 width_bytes = f.read(4)
                 height_bytes = f.read(4)
-                mode_bytes = f.read(4)
 
-                if len(width_bytes) != 4 or len(height_bytes) != 4 or len(mode_bytes) != 4:
+                if len(width_bytes) != 4 or len(height_bytes) != 4:
                     return "Error: Invalid ULIF file format"
+
                 width = int.from_bytes(width_bytes, byteorder='big')
                 height = int.from_bytes(height_bytes, byteorder='big')
-                mode = mode_bytes.decode('ascii', errors='replace')
 
                 file_size = os.path.getsize(filename)
                 file_size_str = self.get_formatted_file_size(file_size)
 
-                if 'P' in mode:
-                    bit_depth = 8
-                else:
-                    bit_depth = len(mode) * 8
+                bit_depth = 24
 
         except Exception as e:
             return f"Error: {str(e)}"
 
         format_info = f"Format: ULIF\n"
-        mode_info = f"Mode: {mode}\n"
+        mode_info = f"Mode: RGB\n"
         size_info = f"Dimensions: {width} x {height} pixels\n"
         file_size_info = f"File Size: {file_size_str}\n"
         bit_depth_info = f"Bit Depth: {bit_depth} bits"
@@ -127,7 +124,7 @@ class ImageEncoderDecoderApp:
         return format_info + mode_info + size_info + file_size_info + bit_depth_info
 
     def get_formatted_file_size(self, size_in_bytes):
-        # Convert file size cuz 
+        # Convert file size
         if size_in_bytes >= 1024 * 1024:
             return f"{size_in_bytes / (1024 * 1024):.2f} MB"
         elif size_in_bytes >= 1024:
@@ -142,3 +139,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
