@@ -34,4 +34,5 @@ As you can see, the image of laptop size is like 450Kb, while in png, it just 15
 * that it
 
 
-a random and joke format by Radxy
+# Credit
+a random and joke format by Radxy (me)
