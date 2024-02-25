@@ -9,7 +9,7 @@ Simple!
 * Image = Indeed a image
 * Format = format. idk what to say
 
-Indeed this project a hypocrite
+Indeed this project is a hypocrite
 
 # Features 
 why image format is gud?
