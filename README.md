@@ -13,4 +13,4 @@ This image format is goud
 # Example
 ![Exaple](exaple.PNG)
 
-As you can see, the image of laptop is really havy like 450Kb, while in png, it just 151Kb. A lot of 'improvement'.
+As you can see, the image of laptop size is like 450Kb, while in png, it just 151Kb. A lot of 'improvement'.
