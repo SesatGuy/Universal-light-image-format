@@ -30,5 +30,8 @@ As you can see, the image of laptop size is like 450Kb, while in png, it just 15
 
 # Roadmaps (if i know what to do)
 
-• compressed image
-• that it
+* compressed image
+* that it
+
+
+a random and joke format by Radxy
