@@ -7,53 +7,37 @@ class ImageEncoderDecoderApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Image Encoder/Decoder")
-
-        # Set window size
-        self.master.geometry("800x400")
-
-        # Create upload frame
+        self.master.geometry("1000x600")
         self.upload_frame = tk.Frame(self.master, bd=2, relief=tk.RIDGE)
         self.upload_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10, side=tk.LEFT)
-
-        # Create display frame
         self.display_frame = tk.Frame(self.master, bd=2, relief=tk.RIDGE)
         self.display_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10, side=tk.RIGHT)
-
-        # Upload widgets
         self.upload_label = tk.Label(self.upload_frame, text="Upload Image to Encode:", font=('Helvetica', 12))
         self.upload_label.pack(pady=10)
         self.upload_button = tk.Button(self.upload_frame, text="Upload", command=self.upload_image, font=('Helvetica', 10))
         self.upload_button.pack(pady=5)
-        
-        # Decode widgets
         self.decode_label = tk.Label(self.display_frame, text="Decoded Image:", font=('Helvetica', 12))
         self.decode_label.pack(pady=10)
         self.decode_button = tk.Button(self.display_frame, text="Decode", command=self.decode_image, font=('Helvetica', 10))
         self.decode_button.pack(pady=5)
         self.decoded_image_label = tk.Label(self.display_frame)
         self.decoded_image_label.pack(pady=10)
-        
-        # Image info labels
         self.image_info_label = tk.Label(self.display_frame, text="", justify="left", font=('Helvetica', 10))
         self.image_info_label.pack(pady=10)
-
-        # Initialize variables
         self.image = None
 
     def upload_image(self):
         filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp")])
         if filename:
             self.image = Image.open(filename)
-            self.image.thumbnail((400, 300))  # Resize image to fit in label
+            self.image.thumbnail((400, 300))
             self.photo = ImageTk.PhotoImage(self.image)
             self.upload_button.config(text="Upload Another Image")
 
-            # Ask user for ULIF file name and location
             ulif_filename = filedialog.asksaveasfilename(defaultextension=".ulif", filetypes=[("ULIF Files", "*.ulif")])
             if ulif_filename:
                 self.encode_ulif(ulif_filename)
 
-                # Display image info
                 image_info = self.get_image_info(ulif_filename)
                 self.image_info_label.config(text=image_info)
 
@@ -64,12 +48,9 @@ class ImageEncoderDecoderApp:
             mode = self.image.mode  # Get image mode (e.g., "RGB", "RGBA", "P", etc.)
 
             with open(filename, 'wb') as f:
-                # Write width, height, and mode
                 f.write(width.to_bytes(4, byteorder='big'))
                 f.write(height.to_bytes(4, byteorder='big'))
                 f.write(mode.encode('ascii'))  # Encode mode as ASCII bytes
-
-                # Write pixel data
                 f.write(pixel_data)
 
     def decode_image(self):
@@ -77,7 +58,6 @@ class ImageEncoderDecoderApp:
         if filename:
             try:
                 with open(filename, 'rb') as f:
-                    # Read width, height, and mode
                     width_bytes = f.read(4)
                     height_bytes = f.read(4)
                     mode_bytes = f.read(4)
@@ -98,7 +78,6 @@ class ImageEncoderDecoderApp:
                 self.decoded_image_label.configure(image=decoded_photo)
                 self.decoded_image_label.image = decoded_photo
 
-                # Display image info
                 image_info = self.get_image_info(filename)
                 self.image_info_label.config(text=image_info)
 
@@ -107,7 +86,6 @@ class ImageEncoderDecoderApp:
 
     def get_image_info(self, filename):
         try:
-            # Read ULIF file header
             with open(filename, 'rb') as f:
                 width_bytes = f.read(4)
                 height_bytes = f.read(4)
