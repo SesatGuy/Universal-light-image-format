@@ -4,10 +4,10 @@ Just random image format in python cuz why not
 # Why UNIF is the name of this format?
 Simple!
 
-• Universal = Only 1 program support this
-• Light = this thing heavy
-• Image = Indeed a image
-• Format = format. idk what to say
+* Universal = Only 1 program support this
+* Light = this thing heavy
+* Image = Indeed a image
+* Format = format. idk what to say
 
 Indeed this project a hypocrite
 
