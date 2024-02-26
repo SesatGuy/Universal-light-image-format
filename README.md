@@ -23,7 +23,8 @@ why image format is gud?
 
 # Example
 
-As you can see, the image of laptop size is like 450Kb, while in png, it just 151Kb. A lot of 'improvement'.
+v0.0.2 only
+~As you can see, the image of laptop size is like 450Kb, while in png, it just 151Kb. A lot of 'improvement'.~
 
 ![Exaple](exaple.PNG)
 
