@@ -2,20 +2,19 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 import os
-import sys
+import threading
 
 class ImageEncoderDecoderApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("ULIF Program v0.0.3")
+        self.master.title("ULIF Program v0.0.31")
         self.master.geometry("1400x1000")
-
         
         self.master.configure(bg="#f0f0f0")
         self.font = ('Helvetica', 12)
         
         self.notebook = ttk.Notebook(self.master)
-        self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.notebook.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
         self.upload_frame = tk.Frame(self.notebook, bg="#ffffff", bd=2, relief=tk.RAISED)
         self.display_frame = tk.Frame(self.notebook, bg="#ffffff", bd=2, relief=tk.RAISED)
@@ -23,30 +22,28 @@ class ImageEncoderDecoderApp:
         self.notebook.add(self.upload_frame, text='Upload')
         self.notebook.add(self.display_frame, text='Display')
 
+        # Upload Frame
         self.upload_label = tk.Label(self.upload_frame, text="Upload Image to Encode:", font=self.font, bg="#ffffff")
-        self.upload_label.pack(pady=10)
+        self.upload_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self.upload_button = tk.Button(self.upload_frame, text="Upload Image", command=self.upload_image, font=self.font)
-        self.upload_button.pack(pady=5)
-        
-        self.decode_label = tk.Label(self.display_frame, text="Decoded Image:", font=self.font, bg="#ffffff")
-        self.decode_label.pack(pady=10)
-        self.decode_button = tk.Button(self.display_frame, text="Decode Image", command=self.decode_image, font=self.font)
-        self.decode_button.pack(pady=5)
+        self.upload_button.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.uploaded_image_display = tk.Label(self.upload_frame, bg="#ffffff")
-        self.uploaded_image_display.pack(pady=5)
+        self.uploaded_image_display.grid(row=2, column=0, padx=10, pady=5)
+
+        # Display Frame
+        self.decode_label = tk.Label(self.display_frame, text="Decoded Image:", font=self.font, bg="#ffffff")
+        self.decode_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.decode_button = tk.Button(self.display_frame, text="Decode Image", command=self.decode_image, font=self.font)
+        self.decode_button.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.image_info_label = tk.Label(self.display_frame, text="", justify="left", font=('Helvetica', 10), bg="#ffffff")
-        self.image_info_label.pack(pady=10)
+        self.image_info_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
         self.decoded_image_display = tk.Label(self.display_frame, bg="#ffffff")
-        self.decoded_image_display.pack(pady=5)
-        
+        self.decoded_image_display.grid(row=3, column=0, padx=10, pady=5)
+
         self.image = None
-        if len(sys.argv) > 1:
-            ulif_file = sys.argv[1]
-            if ulif_file.lower().endswith('.ulif'):
-                self.decode_ulif_file(ulif_file)
 
     def upload_image(self):
         filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp")])
@@ -56,7 +53,7 @@ class ImageEncoderDecoderApp:
                 self.upload_button.config(text="Upload Another Image")
                 ulif_filename = filedialog.asksaveasfilename(defaultextension=".ulif", filetypes=[("ULIF Files", "*.ulif")])
                 if ulif_filename:
-                    self.encode_ulif(ulif_filename)
+                    threading.Thread(target=self.encode_ulif, args=(ulif_filename,)).start()
 
                     image_info = self.get_image_info(ulif_filename)
                     self.image_info_label.config(text=image_info)
@@ -66,7 +63,10 @@ class ImageEncoderDecoderApp:
     def encode_ulif(self, filename):
         if self.image:
             try:
-                resized_image = self.image.resize((int(self.image.width / 1.3), int(self.image.height / 1.3)))
+                max_dimension = 1020
+                resizing_factor = min(max_dimension / max(self.image.width, self.image.height), 1.0)
+                resized_image = self.image.resize((int(self.image.width * resizing_factor), int(self.image.height * resizing_factor)))
+                
                 rgb_image = resized_image.convert("RGB")
                 width, height = rgb_image.size
                 pixel_data = rgb_image.tobytes()
@@ -79,7 +79,7 @@ class ImageEncoderDecoderApp:
                     f.write(pixel_data)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to encode image: {str(e)}")
-            
+
     def decode_image(self):
         filename = filedialog.askopenfilename(filetypes=[(".ULIF", "*.ulif")])
         if filename:
@@ -103,7 +103,12 @@ class ImageEncoderDecoderApp:
 
                 try:
                     decoded_image = Image.frombytes("RGB", (width, height), pixel_data)
-                    decoded_image.thumbnail((width/1.25, height/1.25))  # must same as image
+                    
+                    scaling_factor = 0.85
+                    thumbnail_width = int(width * scaling_factor)
+                    thumbnail_height = int(height * scaling_factor)
+                    decoded_image.thumbnail((thumbnail_width, thumbnail_height))
+                    
                     decoded_photo = ImageTk.PhotoImage(decoded_image)
                     self.decoded_image_display.config(image=decoded_photo)
                     self.decoded_image_display.image = decoded_photo
