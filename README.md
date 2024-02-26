@@ -15,9 +15,9 @@ Indeed this project is a hypocrite
 why image format is gud?
 
 * Umcompressed in result it have big size
+* resize it to make it lighter (count it as most simple and dumb way to compress)
 * nothing in the internet support it
 * RGB supported
-* suck 
 * it custom
 
 
