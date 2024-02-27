@@ -7,7 +7,7 @@ import threading
 class ImageEncoderDecoderApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("ULIF Program v0.0.31")
+        self.master.title("ULIF Program v0.0.4")
         self.master.geometry("1400x1000")
         
         self.master.configure(bg="#f0f0f0")
