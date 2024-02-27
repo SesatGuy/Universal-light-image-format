@@ -7,7 +7,7 @@ import subprocess
 class ImageGalleryApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("ULIF Photo App")
+        self.master.title("ULIF Photo App v0.0.1")
         self.master.geometry("1400x1000")
         self.master.configure(bg="#f0f0f0")
         self.font = ('Helvetica', 12)
