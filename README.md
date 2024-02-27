@@ -28,6 +28,10 @@ v0.0.2 only
 
 ![Exaple](exaple.PNG)
 
+v0.0.32 and so on
+We improve the image by a little bit, 151 kb on png image (588x424) to 974ish kb
+![Exaple](TEXTimage.png)
+
 
 # Roadmaps (if i know what to do)
 
